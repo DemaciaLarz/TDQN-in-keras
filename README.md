@@ -24,8 +24,21 @@ This is acheived through an application in which daily results from the models a
 
 In a nutshell a cronjob runs the script around 5:00am each morning. It collects yesterdays closing data through some selenium code, performs the inference procedure and updates a set of databases so that its action can get interpreted as a buy or sell signal in perfect time a few hours before the markets open.
 
-This could provide some opportunity. Either by simply dedicating a bit of capital for the purpose and executing the daily trades each day as per ones favourite model, or by using the model behaiviour as merely additional intel in ones own decision making process. Executing trades automatically through some api has not been a pursuit of this particular project.
+This could provide some opportunity. Either by simply dedicating a bit of capital for the purpose and executing the daily trades each day as per ones favourite model, or by using the model behaiviour as merely additional intel in ones own decision making process. 
+
+Executing trades automatically through some api has not been a pursuit of this particular project, but rather a more intelligent trading screen. 
 
 Below is a screenshot of the application. It can currently be found [here](http://35.158.207.95/).
 
 ![Application img](https://github.com/DemaciaLarz/implementing-TDQN-in-keras/blob/main/files/application_1.png "Application 1")
+
+#### Code comments
+
+
+#### Results comments
+
+
+#### Reinforcement learning
+
+
+## TDQN implementation notes
