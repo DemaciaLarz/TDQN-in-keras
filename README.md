@@ -59,7 +59,7 @@ These stood strong even though numerous attempts were made later on to achieve b
 
 The "BH" is the baseline, the underlying assets actual movement. 
 
-[Here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/training_2_powercell.html) is a notebook in which one can follow the training of a Powercell model.
+[Here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/notebooks/htmls/training_2_powercell.html) is a notebook in which one can follow the training of a Powercell model.
 
 
 
