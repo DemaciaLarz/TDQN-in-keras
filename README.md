@@ -1,23 +1,24 @@
 # Implementing TDQN in Keras
 Consider as the basic building block of this project the Trading Deep Q-Network algorithm (TDQN) as it is put forward in the paper named: An Application of Deep Reinforcement Learning to Algorithmic Trading which you can find [here](https://arxiv.org/abs/2004.06627).
 
-## Summary
-
-#### Objectives
+### Objectives
 The objective was to implement the TDQN algorithm on a set of shares from the upcoming hydrogen sector in order to obtain valuable insights into market movements. 
 
 As it turned out it got applied to historical gold prices for the initial training, and then quite successfully to one hydrogen stock, Powercell Sweden. Here are some nice results:
 
 ![Powercell results](https://github.com/DemaciaLarz/implementing-TDQN-in-keras/blob/main/files/img_results_powercell_1.png "Powercell results")
 
-#### Underlying assets - data
+### Underlying Assets - Data
 Powercell Sweden is a fuel cell manufacturer listed on the First North GM Sweden market, [here](http://www.nasdaqomxnordic.com/aktier/microsite?Instrument=SSE105121&name=PowerCell%20Sweden) is information on the share and the historical prices, and [here](https://www.powercell.se/en/start/) is info on the company.
 
 You can find analysis and preprocessing as it relates to this project of the actual data [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/know_your_data_2_powercell.html).
 
 When it comes to gold, [here](https://www.kaggle.com/omdatas/historic-gold-prices) are the historical prices, and [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/know_your_data_1_gold.html) is the analysis from this project.
 
-#### User-values / downstream application
+### TDQN Implementation Notes
+[Here]() you can find further comments on selected topics with respect to implementation.
+
+#### User-Values / Downstream Application
 The use-case is to apply one or more successfully trained models such that they are able to bring some actual useful intel on a daily basis when it comes to the Powercell share movements.
 
 This is achieved through an application, in which daily results based on the two models’ actions alongside the underlying asset as a baseline is being presented. The results are obtained by running an inference procedure as per the [pipeline.py]() script. 
@@ -39,10 +40,10 @@ Below is a screenshot from the application. It can at the time of writing be fou
 * in the notebooks folder there are some notebooks on preprocessing, results and training.
 * the CSV file is Powercell data up until 2020-09-25.
 
-#### Results comments
+#### Results
 On **gold**, the first results that came in are [these](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/results_1_gold.html). What really made the difference from flat to actual learning were a proper implementation of the X2 state, and a reward clipping procedure. See more about this in the TDQN implementation notes [here](). 
 
-You can follow the training of the mentioned gold model [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/training_1_gold.html). 
+You can follow the training of a gold model [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/training_1_gold.html). 
 
 After some further runs the following results were obtained:
 
@@ -56,7 +57,10 @@ These stood strong even though numerous attempts were made later on to achieve b
 
 ![Powercell results 3](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/image_results_powercell_3.png "Powercell results 3")
 
-The "BH" is the baseline, the underlying assets actual movement.
+The "BH" is the baseline, the underlying assets actual movement. 
+
+[Here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/training_2_powercell.html) is a notebook in which one can follow the training of a Powercell model.
+
 
 
 
