@@ -30,7 +30,7 @@ Executing trades automatically through some API has always been outside the scop
 
 Below is a screenshot from the application. It can at the time of writing be found [here](http://35.158.207.95/).
 
-![Application img](https://github.com/DemaciaLarz/implementing-TDQN-in-keras/blob/main/files/application_1.png "Application 1")
+![Application img](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/image_application.png "Application 1")
 
 #### Content
 * train.py is the code on which the most successful model was trained. It takes Powercell CSV data and trains a TDQN agent.
