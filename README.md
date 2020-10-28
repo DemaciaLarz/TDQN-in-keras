@@ -48,5 +48,15 @@ After some further runs the following results were obtained:
 
 ![Gold results image](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/image_results_gold.png "Gold results image")
 
-On **Powercell**, we got numerous results worth mentioning, you can find them [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/results_3_powercell%20.html). These stood strong even though numerous attempts were made later on to achieve better, [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/results_4_powercell%20.html) is one example where more capacity were put on.
+On **Powercell**, we got numerous results worth mentioning, here are some of them:
+
+![Powercell results 2](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/image_results_powercell_2.png "Powercell results 2")
+
+These stood strong even though numerous attempts were made later on to achieve better, below is one example where more capacity were put on:
+
+![Powercell results 3](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/image_results_powercell_3.png "Powercell results 3")
+
+The "BH" is the baseline, the underlying assets actual movement.
+
+
 
