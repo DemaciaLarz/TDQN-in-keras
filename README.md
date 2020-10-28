@@ -13,22 +13,22 @@ As it turned out it got applied to historical gold prices for the initial traini
 #### Underlying assets - data
 Powercell Sweden is a fuel cell manufacturer listed on the First North GM Sweden market, [here](http://www.nasdaqomxnordic.com/aktier/microsite?Instrument=SSE105121&name=PowerCell%20Sweden) is information on the share and the historical prices, and [here](https://www.powercell.se/en/start/) is info on the company.
 
-You can find analysis and preprocessing as it relates to this project of the actual data [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/know_your_data_2_powercell.html)
+You can find analysis and preprocessing as it relates to this project of the actual data [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/know_your_data_2_powercell.html).
 
-When it comes to gold [here](https://www.kaggle.com/omdatas/historic-gold-prices) are the historical prices, and [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/know_your_data_1_gold.html) is the analysis from this project.
+When it comes to gold, [here](https://www.kaggle.com/omdatas/historic-gold-prices) are the historical prices, and [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/know_your_data_1_gold.html) is the analysis from this project.
 
 #### User-values / downstream application
 The use-case is to apply one or more successfully trained models such that they are able to bring some actual useful intel on a daily basis when it comes to the Powercell share movements.
 
 This is achieved through an application, in which daily results based on the two models’ actions alongside the underlying asset as a baseline is being presented. The results are obtained by running an inference procedure as per the [pipeline.py]() script. 
 
-In a nutshell, a cronjob runs the script around 5:00 am each morning. It collects yesterday’s closing data through some selenium code, performs the inference procedure, and updates a set of databases so that its action can get interpreted as a buy or sell signal in perfect time a few hours before the markets open.
+In a nutshell, a cronjob runs the script around 5:00 am each morning. It collects yesterday’s closing data through some selenium code, performs the inference procedure, and updates a set of databases so that the actions of the two models can get interpreted as buy or sell signals in perfect time a few hours before the markets open.
 
 This could provide some opportunity. Either by simply dedicating a bit of capital for the purpose and executing the daily trades each day as per one’s favorite model or by using the model behavior as merely additional intel in one’s own decision-making process. 
 
-Executing trades automatically through some API has not been a pursuit of this particular project, but rather a more intelligent trading screen. 
+Executing trades automatically through some API has always been outside the scope of this project. The pursuit has rather been towards a more intelligent trading screen. 
 
-Below is a screenshot of the application. It can currently be found [here](http://35.158.207.95/).
+Below is a screenshot from the application. It can at the time of writing be found [here](http://35.158.207.95/).
 
 ![Application img](https://github.com/DemaciaLarz/implementing-TDQN-in-keras/blob/main/files/application_1.png "Application 1")
 
@@ -42,11 +42,11 @@ Below is a screenshot of the application. It can currently be found [here](http:
 #### Results comments
 On **gold**, the first results that came in are [these](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/results_1_gold.html). What really made the difference from flat to actual learning were a proper implementation of the X2 state, and a reward clipping procedure. See more about this in the TDQN implementation notes [here](). 
 
-You can follow the training of the mentioned gold model [here]. 
+You can follow the training of the mentioned gold model [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/training_1_gold.html). 
 
 After some further runs the following results were obtained:
 
-[img]
+![Gold results image](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/image_results_gold.png "Gold results image")
 
-On **Powercell**, we got numerous results worth mentioning, you can find them [here]. These stood strong even though numerous attempts were made later on to achieve better, [here] there was more capacity put on for example. 
+On **Powercell**, we got numerous results worth mentioning, you can find them [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/results_3_powercell%20.html). These stood strong even though numerous attempts were made later on to achieve better, [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/results_4_powercell%20.html) is one example where more capacity were put on.
 
