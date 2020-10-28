@@ -14,4 +14,4 @@ The following links provides a preview of the respective html file:
 
 [training_1_gold.html](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/training_1_gold.html)
 
-[training_2_powercell.html](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/training_2_powercell.html)
+[training_2_powercell.html](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/notebooks/htmls/training_2_powercell.html)
