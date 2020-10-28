@@ -18,7 +18,7 @@ When it comes to gold, [here](https://www.kaggle.com/omdatas/historic-gold-price
 ### TDQN Implementation Notes
 [Here]() you can find further comments on selected topics with respect to implementation.
 
-#### User-Values / Downstream Application
+### User-Values / Downstream Application
 The use-case is to apply one or more successfully trained models such that they are able to bring some actual useful intel on a daily basis when it comes to the Powercell share movements.
 
 This is achieved through an application, in which daily results based on the two models’ actions alongside the underlying asset as a baseline is being presented. The results are obtained by running an inference procedure as per the [pipeline.py]() script. 
@@ -33,14 +33,14 @@ Below is a screenshot from the application. It can at the time of writing be fou
 
 ![Application img](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/image_application.png "Application 1")
 
-#### Content
+### Content
 * train.py is the code on which the most successful model was trained. It takes Powercell CSV data and trains a TDQN agent.
 * pipeline.py is the inference procedure.
 * the two model files are saved Tensorflow Keras model objects. These are the two models in the application.
 * in the notebooks folder there are some notebooks on preprocessing, results and training.
 * the CSV file is Powercell data up until 2020-09-25.
 
-#### Results
+### Results
 On **gold**, the first results that came in are [these](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/results_1_gold.html). What really made the difference from flat to actual learning were a proper implementation of the X2 state, and a reward clipping procedure. See more about this in the TDQN implementation notes [here](). 
 
 You can follow the training of a gold model [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/training_1_gold.html). 
