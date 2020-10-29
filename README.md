@@ -111,29 +111,29 @@ During most part of the early project we suffered hard from diverging Q values d
 #### 6.2 Actions
 
 **The action**
-At each timestep t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context one can consider the chain of the action from the estimated Q values, to an action-preference throuhg an argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and out comes the trading action of its choice. This trading action ![](http://www.sciweavers.org/tex2img.php?eq=Q_t&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=) is the actual action of the agent, and it can be either long or short.
+At each timestep t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context one can consider the chain of the action from the estimated Q values, to an action-preference throuhg an argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and out comes the trading action of its choice. This trading action ![m1](http://www.sciweavers.org/tex2img.php?eq=Q_t&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=) is the actual action of the agent, and it can be either long or short.
 
 **Effects of the action**
 Each trading action has an effect on both of the two components of the portfolio value, that is cash and stock value. Here are their update rules:
 
-![](http://www.sciweavers.org/tex2img.php?eq=%20v%5E%7Bcash%7D_%7Bt%20%2B%201%7D%20%3D%20v%5E%7Bcash%7D_%7Bt%7D%20-%20Q_tp_t%20&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
+![m2](http://www.sciweavers.org/tex2img.php?eq=%20v%5E%7Bcash%7D_%7Bt%20%2B%201%7D%20%3D%20v%5E%7Bcash%7D_%7Bt%7D%20-%20Q_tp_t%20&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
 
-![](http://www.sciweavers.org/tex2img.php?eq=%20v%5E%7Bstock%7D_%7Bt%20%2B%201%7D%20%3D%20v%5E%7Bstock%7D_%7Bt%7D%20%28n_t%20%2B%20Q_t%29%20t_%7Bt%20%2B%201%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
+![m3](http://www.sciweavers.org/tex2img.php?eq=%20v%5E%7Bstock%7D_%7Bt%20%2B%201%7D%20%3D%20v%5E%7Bstock%7D_%7Bt%7D%20%28n_t%20%2B%20Q_t%29%20t_%7Bt%20%2B%201%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
 
 This can be understood as such that the cash change as per the taken position times the price of the share. Whereas the stock value is made up from the number of stocks owned post the trade times the price.
 
 **Simplifying the short position**
-Moving on to the formulaiton of the ![](http://www.sciweavers.org/tex2img.php?eq=Q_t&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=) long and short positions. A modification made within this project was to simplify the short position, such that the agent is not able to sell any shares it does not hold. Nevertheless the lack of opportunity this would bring, the reasons for the simplification of the short position in this project are as follows:
+Moving on to the formulaiton of the ![m4](http://www.sciweavers.org/tex2img.php?eq=Q_t&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=) long and short positions. A modification made within this project was to simplify the short position, such that the agent is not able to sell any shares it does not hold. Nevertheless the lack of opportunity this would bring, the reasons for the simplification of the short position in this project are as follows:
 1. user-value - our downstream use-case will not really be in a position to capitalize on any opportunity brought by the agent through the execution of a short position, mainly due to access, price and hazzle.
-2. accuracy - what is the proper market volatility parameter ![](http://www.sciweavers.org/tex2img.php?eq=%5Cepsilon&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=), and what is the cost estimation for shorting the stock? It is not something of immedieate clarity.
+2. accuracy - what is the proper market volatility parameter ![m5](http://www.sciweavers.org/tex2img.php?eq=%5Cepsilon&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=), and what is the cost estimation for shorting the stock? It is not something of immedieate clarity.
 3. comfort - it reduces complexity in the implementation, makes it easier.
 
 **The long and short positions**
 With this in mind, the long and short positions can now described. Note that it is a reduced action space that is in question now, one in which there only exist buying or selling everything each trade, nothing in between. Note furthermore that this is the setup our best models ran on. However, we also experiemnted with larger action spaces, see more below.
 
-![](http://www.sciweavers.org/tex2img.php?eq=%20Q%5E%7Blong%7D_t%20%3D%20%5Cfrac%7BV%5EC_t%7D%7Bp_t%20%281%20%2B%20C%29%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
+![m6](http://www.sciweavers.org/tex2img.php?eq=%20Q%5E%7Blong%7D_t%20%3D%20%5Cfrac%7BV%5EC_t%7D%7Bp_t%20%281%20%2B%20C%29%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
 
-![](http://www.sciweavers.org/tex2img.php?eq=%20Q%5E%7Bshort%7D_t%20%3D%20-n_t&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
+![m7](http://www.sciweavers.org/tex2img.php?eq=%20Q%5E%7Bshort%7D_t%20%3D%20-n_t&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
 
 This can be understood such that the long position represents the maximum number of shares it can get out of the cash that the agent currently holds and with transaction costs taken into account. The short position is simply the number of shares held by the agent. 
 
