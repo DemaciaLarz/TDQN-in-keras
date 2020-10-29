@@ -88,7 +88,7 @@ One question that arised was how to encode this properly such that core pieces o
 
 First of all the cash and stock value made sense to simply put in a two dimensional vector and apply some normalizer of choice and they would under all circumstances maintain their opposite proportions meanwhile bottoming out when zero, this would signal to the agent which kind of position it is capable to formulate. 
 
-A number of scaling methods were tested, such as unit norm, min max scaling with various boundaries. Standard normal scaling, removing the mean and scale to unit variance is the key though, basically due to the stability in training that it brings which allows for results to maybe or maybe not come to light. 
+A number of scaling methods were tested, standard normal scaling, removing the mean and scale to unit variance is what worked best. The reason is simply the stability in training that it brings which allows for results to maybe or maybe not come to light. 
 
 When it comes to the number of stock, it can easily become very large depending on the price of the stock and the initial cash value the agent is allowed to start trading with. This led me to be intitally suspicious about just clamping it in there with the cash and stock value. Hence a setup in which information about the number of stock was encoded via a one-hot procedure. 
 
@@ -106,11 +106,12 @@ The portfolio value is the sum of cash and stock value, and the strategy as per 
 During most part of the early project we suffered hard from diverging Q values during training. By that we mean that as training progressed the action values kept growing apart. In effect this gave rise to a sub optimal / useless dominant either buy or sell strategy. The reward signal was idnetified as a prosperous angle to attack the problem from. Here are some the attempts:
 * episodic scaling - holding all the transiitons until the end of the episode allows for the applience applying some scaling procedure on the block of rewards, and only to after that store all of it into memory. 
 * scaling - we did alot of scaling, unit norm, log, min max, standard, standard without shifting the mean. The same thing with respect to larger polulations of rewards from memory and from preivous runs and so on. Still unstable training.
-* clipping - when we added clipping into the mix though, things changed. The hesitance was the quite obvious risk of loosing valuable information by making the rewards much more sparse. Given that clipping the rewards added to the rise of a very stable training, that is an easy tradeoff to make. Recall also that information about all the subtelties about the changes in portfolio value is in fact encoded into the X2 stream which is presented to model. This is being propagated through the network and has very much infleunce over the estimated action values. One can perhaps express it such that the TD error is simply kept in line by a sparse reward clipping procedure, meanwhile the inner state provides the intel needed for the actual position taking.
-
+* clipping - when we added clipping into the mix, things changed. The initial hesitance came from the obvious risk of loosing valuable information by making the rewards much more sparse. Given that clipping the rewards added to the rise of a very stable training, trading off the potential of loosing information was not a difficult desicion to make. Recall also, that information about all the subtelties about the changes in portfolio value is in fact encoded into the X2 stream. This is in turn propagated through the network and has assumably very much infleunce over the estimated action values. One can perhaps express it such that the TD error is simply kept in line by a sparse reward clipping procedure, meanwhile the inner state provides the intel needed for the actual position taking. In any case it is what worked for us, so we ran with it.
 
 #### 6.2 Actions
-The agents actions consist of the 
+At each timestep t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context one can consider the chain of the action from the estimated Q values, to an action-preference throuhg an argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and out comes the trading action of its choice. This trading action ![](http://www.sciweavers.org/tex2img.php?eq=Q_t&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=) is the actual action of the agent.
+
+Each trading action has an effect on both of the two components of the portfolio value, that is cash and stock value. 
 
 
 * formulating the long and short position
