@@ -67,6 +67,9 @@ The "BH" is the baseline, the Powercell shares actual movements scaled to the po
 ### 6 TDQN Implementation Notes
 
 #### 6.1 State Representation
+The agents observations consist at each timestep of the following: 
+
+
 * in general, the X1 state
 * specifically about the inner X2 state, the normalizing and the one-hot things
 
@@ -102,3 +105,6 @@ reducing the action space, three fold reason
 * diverging q values, the single largest obstacle
 * 
 *
+
+
+![alt text](http://www.sciweavers.org/tex2img.php?eq=%3Cb%3E%3Ci%3Ep_t%28x%5E2%29%20%3D%205%20%2A%20%5Calpha%3C/i%3E%3C/b%3E&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
