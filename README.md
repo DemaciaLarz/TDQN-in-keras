@@ -110,26 +110,22 @@ During most part of the early project we suffered hard from diverging Q values d
 
 #### 6.2 Actions
 
-**The action**
-At each timestep t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context one can consider the chain of the action from the estimated Q values, to an action-preference throuhg an argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and out comes the trading action of its choice. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
+**The action:** at each timestep t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context one can consider the chain of the action from the estimated Q values, to an action-preference throuhg an argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and out comes the trading action of its choice. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
 
-**Effects of the action**
-Each trading action has an effect on both of the two components of the portfolio value, that is cash and stock value. Here are their update rules:
+**Effects of the action:** each trading action has an effect on both of the two components of the portfolio value, that is cash and stock value. Here are their update rules:
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img3.png)
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img2.png)
 
-This can be understood as such that the cash change as per the taken position times the price of the share. Whereas the stock value is made up from the number of stocks owned post the trade times the price.
+This can be understood as such that the cash value change with the cash needed for the taken position. Whereas the stock value is made up from the number of stocks owned post the trade times the price.
 
-**Simplifying the short position**
-Moving on to the formulaiton of the ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) long and short positions. A modification made within this project was to simplify the short position, such that the agent is not able to sell any shares it does not hold. Nevertheless the lack of opportunity this would bring, the reasons for the simplification of the short position in this project are as follows:
+**Simplifying the short position:** moving on to the formulaiton of the ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) long and short positions. A modification made within this project was to simplify the short position, such that the agent is not able to sell any shares it does not hold. Nevertheless the lack of opportunity this would bring, the reasons for the simplification of the short position in this project are as follows:
 1. user-value - our downstream use-case will not really be in a position to capitalize on any opportunity brought by the agent through the execution of a short position, mainly due to access, price and hazzle.
 2. accuracy - what is the proper market volatility parameter ![m5](http://www.sciweavers.org/tex2img.php?eq=%5Cepsilon&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=), and what is the cost estimation for shorting the stock? It is not something of immedieate clarity.
 3. comfort - it reduces complexity in the implementation, makes it easier.
 
-**The long and short positions**
-With this in mind, the long and short positions can now described. Note that it is a reduced action space that is in question now, one in which there only exist buying or selling everything each trade, nothing in between. Note furthermore that this is the setup our best models ran on. However, we also experiemnted with larger action spaces, see more below.
+**The long and short positions:** with this in mind, the long and short positions can now described. Note that it is a reduced action space that is in question now, one in which there only exist buying or selling everything each trade, nothing in between. Note furthermore that this is the setup our best models ran on. However, we also experiemnted with larger action spaces, see more below.
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img6.png)
 
@@ -138,6 +134,16 @@ With this in mind, the long and short positions can now described. Note that it 
 This can be understood such that the long position represents the maximum number of shares it can get out of the cash that the agent currently holds and with transaction costs taken into account. The short position is simply the number of shares held by the agent. 
 
 **Expanding the action space**
+Consider the reduced action space as a set that consist of exactly one long and one short position:
+
+![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img8.png)
+
+Consider furthermore the set of all legal actions the agent can take:
+
+![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img9.png)
+
+The expression above can be interpreted such that each integer between 
+
 
 
 
