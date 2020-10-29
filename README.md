@@ -133,7 +133,7 @@ With this in mind, the long and short positions can now described. Note that it 
 
 ![m6](http://www.sciweavers.org/tex2img.php?eq=%20Q%5E%7Blong%7D_t%20%3D%20%5Cfrac%7BV%5EC_t%7D%7Bp_t%20%281%20%2B%20C%29%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
 
-![m7](http://www.sciweavers.org/tex2img.php?eq=%20Q%5E%7Bshort%7D_t%20%3D%20-n_t&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
+![m7](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img1.png)
 
 This can be understood such that the long position represents the maximum number of shares it can get out of the cash that the agent currently holds and with transaction costs taken into account. The short position is simply the number of shares held by the agent. 
 
