@@ -98,17 +98,12 @@ In the end though, it turned out that the simplest path often is the most benefi
 However, this setup is currently bounded by the fact that the initial cash is set to 10 000. Even though not pursuid fully, a couple of attempts were made to raise other arbitrary initial values with very poor outcomes. Rationale one can assume would be that proportions matter in terms of encoding information about the agents inner state.
 
 #### 6.3 Scalar Reward Signal
-The portfolio value is the sum of cash and stock value, and the strategy as per the paper is to provide daily returns as rewards for reasons proposed one has to say makes sense. After numerous experiments with a number of varying rewards schemes, clipping the rewards to -1 and 1 really made the difference in terms of creating the stability of training necessary.
+The portfolio value is the sum of cash and stock value, and the strategy as per the paper is to provide daily returns as rewards for reasons proposed one has to say makes sense. After numerous experiments with a number of varying rewards schemes, clipping the rewards to (-1, 0, 1) really made the difference in terms of creating the stability of training necessary.
 
 During most part of the early project we suffered hard from diverging Q values during training. By that we mean that as training progressed the action values kept growing apart. In effect this gave rise to a sub optimal / useless dominant either buy or sell strategy. The reward signal was idnetified as a prosperous angle to attack the problem from. Here are some the attempts:
 * episodic scaling - holding all the transiitons until the end of the episode allows for the applience applying some scaling procedure on the block of rewards, and only to after that store all of it into memory. 
 * scaling - we did alot of scaling, unit norm, min max, standard, standard without shifting the mean. The same thing with respect to larger polulations of rewards from memory and so on. Still unstable training.
-* clipping - bu then we added clipping into the mix. The hesitance was the quite obvious risk of loosing valuable information by making the rewards much more sparse. Given that clipping the rewards added to the rise of a very stable training, that is an easy tradeoff to make. Recall also that information about all the subtelties about the changes in portfolio value is encoded in the X2 stream which is presented to model. This is being propagated through the network and has very much infleunce over the estimated action values. One can perhaps express it such that the TD error is kept in line by a sparse reward clipping procedure, meanwhile  
-
-
-
-* the portfolion return
-* all the transforming, normalizing and clipping procedures
+* clipping - bu then we added clipping into the mix. The hesitance was the quite obvious risk of loosing valuable information by making the rewards much more sparse. Given that clipping the rewards added to the rise of a very stable training, that is an easy tradeoff to make. Recall also that information about all the subtelties about the changes in portfolio value is encoded in the X2 stream which is presented to model. This is being propagated through the network and has very much infleunce over the estimated action values. One can perhaps express it such that the TD error is simply kept in line by a sparse reward clipping procedure, meanwhile the inner state provides the intel needed for the actual position taking.
 
 
 #### 6.2 Actions
