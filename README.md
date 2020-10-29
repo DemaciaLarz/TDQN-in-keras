@@ -41,6 +41,9 @@ Below is a screenshot from the application. It can at the time of writing be fou
 ### 4 Content
 * train.py is the code on which the most successful model was trained. It takes Powercell CSV data and trains a TDQN agent.
 * pipeline.py is the inference procedure.
+* helpers/base.py contains the prioritized experience replay buffer.
+* helpers/data.py gets the data and preprocess it.
+* helpers.hydro.py holds various helper functions.
 * the two model files are saved Tensorflow Keras model objects. These are the two models in the application.
 * in the notebooks folder there are some notebooks on preprocessing, results and training.
 * the CSV file is Powercell data up until 2020-09-25.
