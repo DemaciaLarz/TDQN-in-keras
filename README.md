@@ -68,10 +68,30 @@ The "BH" is the baseline, the Powercell shares actual movements scaled to the po
 
 #### 6.1 State Representation
 The agents observations consist at each timestep of the following: 
+* S(t) represents the agents inner state.
+* D(t) is the information concerning the OHLCV (Open-High-Low-Close-Volume) data characterising the stock market.
+* I(t) represent a number of technical indicators.
 
+This is what was used in order to get the results baove. In some experiements macro related information N(t), and information about date, week and year T(t) also were used. In those particular settings though it disturbed the training to much for any results to appear.
 
-* in general, the X1 state
-* specifically about the inner X2 state, the normalizing and the one-hot things
+You will find in the context of this implementation that D(t) and I(t) bot are in the X1 input stream. Preprocessed and normalized as one they are fed into the model a single input. This was very beneficial. A number of settings with seperatae input streams for various types of observation data was experemented on without success.
+
+When it comes to the agents inner state S(t) it is made up by three parts:
+1. cash - the amount of cash the agent has at its disposal at timestep t.
+2. stock value - the value at timestep t of the stock which the agent is sitting on.
+3. number of stock - the number of stock that the agent holds.
+
+One question that arised was how to encode this properly such that core pieces of information does not get lost. Many variations were tested. 
+
+First of all the cash and stock value made sense to simply put in a two dimensional vector and apply some normalizer of choice and they would under all circumstances maintain their opposite proportions meanwhile bottoming out when zero, this would signal to the agent which kind of position it is capable to formulate. 
+
+A number of scaling methods were tested, such as unit norm, min max scaling with various boundaries. Standard normal scaling, removing the mean and scale to unit variance is the key though, basically due to the stability in training that it brings which allows for results to maybe or maybe not come to light. 
+
+When it comes to the number of stock, it can easily become very large depending on the price of the stock and the initial cash value the agent is allowed to start trading with. This led me to be intitally suspicious about just clamping it in there with the cash and stock value. Hence a setup in which information about the number of stock was encoded via a one-hot procedure. 
+
+This was made possible by adjusting the initial cash such that the number of stock were doomed to fall in between a managable range between zero and one hundred. Obviously this approach is sub optimal, however we were able to get our first results on this setup. At this point the cash and stock value doublet was fed into the model via their own input stream which in the code is denoted x2a, while the one-hot number of stock vector had its own stream, denoted x2b. Together the inner state of the model, S(t) is denoted as the X2 stream.
+
+In the end though, it turned out that the simplest path often is the most beneficial. As of the best performing models, the number of stock, x2b, is simply preprocessed with the x2a, the cash and stock value such that they get normalized together in an online fashion. However, this setup is currently bounded by the fact that the initial cash is set to 10 000. Even though not pursuid fully, a couple of attempts were made to raise other arbitrary initial values with very poor outcomes. Rationale one can assume would be that proportions matter in terms of encoding information about the agents inner state.
 
 #### 6.2 Actions
 * formulating the long and short position
