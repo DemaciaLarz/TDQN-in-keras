@@ -9,21 +9,21 @@ Consider as the basic building block of this project the Trading Deep Q-Network 
 5. Results
 6. TDQN Implementation Notes
 
-### 1 Objectives
+## 1 Objectives
 The objective was to implement the TDQN algorithm on a set of shares from the upcoming hydrogen sector in order to obtain valuable insights into market movements. 
 
 As it turned out it got applied to historical gold prices for the initial training, and then quite successfully to one hydrogen stock, Powercell Sweden. Here are some nice results:
 
 ![Powercell results](https://github.com/DemaciaLarz/implementing-TDQN-in-keras/blob/main/files/img_results_powercell_1.png "Powercell results")
 
-### 2 Underlying Assets - Data
+## 2 Underlying Assets - Data
 Powercell Sweden is a fuel cell manufacturer listed on the First North GM Sweden market, [here](http://www.nasdaqomxnordic.com/aktier/microsite?Instrument=SSE105121&name=PowerCell%20Sweden) is information on the share and the historical prices, and [here](https://www.powercell.se/en/start/) is info on the company.
 
 You can find analysis and preprocessing as it relates to this project of the actual data [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/know_your_data_2_powercell.html).
 
 When it comes to gold, [here](https://www.kaggle.com/omdatas/historic-gold-prices) are the historical prices, and [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/know_your_data_1_gold.html) is the analysis from this project.
 
-### 3 User-Values / Downstream Application
+## 3 User-Values / Downstream Application
 The use-case is to apply one or more successfully trained models such that they are able to bring some actual useful intel on a daily basis when it comes to the Powercell share movements.
 
 This is achieved through an application, in which daily results based on the two models’ actions alongside the underlying asset as a baseline is being presented. The results are obtained by running an inference procedure as per the [pipeline.py]() script. 
@@ -38,7 +38,7 @@ Below is a screenshot from the application. It can at the time of writing be fou
 
 ![Application img](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/image_application.png "Application 1")
 
-### 4 Content
+## 4 Content
 * train.py is the code on which the most successful model was trained. It takes Powercell CSV data and trains a TDQN agent.
 * pipeline.py is the inference procedure.
 * helpers/base.py contains the prioritized experience replay buffer.
@@ -48,7 +48,7 @@ Below is a screenshot from the application. It can at the time of writing be fou
 * in the notebooks folder there are some notebooks on preprocessing, results and training.
 * the CSV file is Powercell data up until 2020-09-25.
 
-### 5 Results
+## 5 Results
 On **gold**, the first results that came in are [these](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/results_1_gold.html). What really made the difference from flat to actual learning were a proper implementation of the X2 state, and a reward clipping procedure. See more about this in the TDQN implementation notes below. 
 
 You can follow the training of a gold model [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/training_1_gold.html). 
@@ -67,9 +67,9 @@ The "BH" is the baseline, the Powercell shares actual movements scaled to the po
 
 [Here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/notebooks/htmls/training_2_powercell.html) is a notebook in which one can follow the training of a Powercell model.
 
-### 6 TDQN Implementation Notes
+## 6 TDQN Implementation Notes
 
-#### 6.1 State Representation
+### 6.1 State Representation
 The agents observations consist at each timestep of the following: 
 * S(t) represents the agents inner state.
 * D(t) is the information concerning the OHLCV (Open-High-Low-Close-Volume) data characterising the stock market.
@@ -100,7 +100,7 @@ In the end though, it turned out that the simplest path often is the most benefi
 
 However, this setup is currently bounded by the fact that the initial cash is set to 10 000. Even though not pursuid fully, a couple of attempts were made to raise other arbitrary initial values with very poor outcomes. Rationale one can assume would be that proportions matter in terms of encoding information about the agents inner state.
 
-#### 6.3 Scalar Reward Signal
+### 6.3 Scalar Reward Signal
 The portfolio value is the sum of cash and stock value, and the strategy as per the paper is to provide daily returns as rewards for reasons proposed one has to say makes sense. After numerous experiments with a number of varying rewards schemes, clipping the rewards to (-1, 0, 1) really made the difference in terms of creating the stability of training necessary.
 
 During most part of the early project we suffered hard from diverging Q values during training. By that we mean that as training progressed the action values kept growing apart. In effect this gave rise to a sub optimal / useless dominant either buy or sell strategy. The reward signal was idnetified as a prosperous angle to attack the problem from. Here are some the attempts:
@@ -108,9 +108,11 @@ During most part of the early project we suffered hard from diverging Q values d
 * scaling - we did alot of scaling, unit norm, log, min max, standard, standard without shifting the mean. The same thing with respect to larger polulations of rewards from memory and from preivous runs and so on. Still unstable training.
 * clipping - when we added clipping into the mix, things changed. The initial hesitance came from the obvious risk of loosing valuable information by making the rewards much more sparse. Given that clipping the rewards added to the rise of a very stable training, trading off the potential of loosing information was not a difficult desicion to make. Recall also, that information about all the subtelties about the changes in portfolio value is in fact encoded into the X2 stream. This is in turn propagated through the network and has assumably very much infleunce over the estimated action values. One can perhaps express it such that the TD error is simply kept in line by a sparse reward clipping procedure, meanwhile the inner state provides the intel needed for the actual position taking. In any case it is what worked for us, so we ran with it.
 
-#### 6.2 Actions
+### 6.2 Actions
 
-**The action:** at each timestep t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context one can consider a journey from the estimated Q values, to an action-preference via argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and out comes out as a trading action. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
+***The action:***
+
+at each timestep t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context one can consider a journey from the estimated Q values, to an action-preference via argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and out comes out as a trading action. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
 
 **Effects of the action:** each trading action has an effect on both of the two components of the portfolio value, that is cash and stock value. Here are their update rules:
 
@@ -162,33 +164,28 @@ Rationale for a procedure such as this could be:
 * one would optimize the positioning sizer signal, "in model", which is appealing.
 * recall the intel about the agents internal state that the X2 stream propagates thorugh the net all the way to the state value estimation. Its all there.
 
-Our hypothesis was under any circumstances that this was worth to pursue. However, we encountered problems in the implementation of the dueling architecture itself which simply led down a different path, the results were elsewhere at that point in time. However, the idea is still appealing.
+Our hypothesis was under any circumstances that this was worth to pursue. We encountered problems in the implementation of the dueling architecture itself though which simply led down a different path, the results were elsewhere at that point in time. However, the idea is still appealing.
 
-#### 6.4 Data Augmentation
-* pcell very small
-* x2 state helped
-* no chance without augment
+### 6.4 Data Augmentation
+Note that the Powercell data set is not more than 1315 observations after that 98 rows was sliced off as the test set. This is not much and it was to our surprise that any results at all were possible. Two things were crucial here. First of all the data augmenttaion techniques such as those that are mentioned in the paper, and secondly the fact that the X2 state is in effect generating new unseen data continously.
 
-#### 6.5 Model Architecture
-* FFNN, comment on LSTM and dueling
-* capacity
-* batchnorm vs dropout
-* seperate input streams
+### 6.5 Model Architecture
+Even though many attempts were made on various LSTM setups and dueling architecture, we ended up on a feed forward neural network. We maintained two input streams with proportions such that the X1 held two thirds of the capacity and one third was given to X2. This worked nicely. On top of this the layers were concatenated and together they went through one additional layer and into output. 
 
-#### 6.6 Hyperparameters
-* alpha, very, very sensitive. only the current is working.
-* gamma, kept quite constant.
-* batchsize
-* num steps were very important
-* weight update
+Many attempts were made to pump up the capacity but the sweetspot in this setting were simply ((200, 100), (200), (2)) and nothing else.
 
-#### 6.7 Loss and Optimizer
-* huber and adam. Tried others but nah
+Results were only possible when a full carpet of batchnormalization layers were applied. Since these layers add quite alot to training time, targeted attempts were made towards the removal of them with poor outcomes. Dropout for example did not do the job, either on its own or combined witn batchnormalization.  
 
-#### 6.8 Selected issues
-* diverging q values, the single largest obstacle
-* 
-*
+**DQN settings**
+Besides some of the original DQN techniques we made use of Double DQN and Prioritized experience replay. You can find the papers for these implementations [here](https://arxiv.org/abs/1509.06461) and [here](https://arxiv.org/abs/1511.05952). 
 
+### 6.6 Hyperparameters
+* aplha / learning rate - the sweet spot were exactly 1e-4, and nothing else.
+* gamma / discount factor - this was kept to 0.5 as per the paper suggests.
+* batchsize - it was found that 32 worked, but so did other settings aswell.
+* steps - this turned out to be very important. We started out much lower and kept raisning it, it turned out that 400, a good third of the entire dataset worked best.
+* weight update - keeping it at 1000 worked nicely.
 
-![alt text](http://www.sciweavers.org/tex2img.php?eq=%3Cb%3E%3Ci%3Ep_t%28x%5E2%29%20%3D%205%20%2A%20%5Calpha%3C/i%3E%3C/b%3E&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=)
+### 6.7 Loss and Optimizer
+We ran Huber loss and Adam optimizer as the paper suggests. Tried a few others at times of desperation but the Huber and Adam combo is what worked.
+
