@@ -180,7 +180,6 @@ Consider the Dueling DQN model architecture. You can find the paper [here](https
 The idea was that one could use the reduced set of actions containing only one for long, and one for short as model output propagated through the advantage stream. Then let the state value as it is propagated throughout the value stream be suitably mapped to a range between zero and one, and use that real number as a multiplicative scaler instead of the sizer parameter in the equations above.
 
 The rationale for a procedure such as this could be as follows.
-* It would allow for an in effect continuous action space with a DQN model architecture.
 * While the action values represent the direction that a trade is going, the state value asks, "how nice is it where I’m standing right now?". One can at least imagine that the state value could encapsulate things such as a tendency towards risk at that particular state and so on. 
 * One would optimize the positioning sizer signal, "in model", which is appealing.
 * Recall the intel about the agent’s internal state that the X2 stream propagates through the net all the way to the state value estimation. It’s all there.
