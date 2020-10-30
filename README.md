@@ -140,19 +140,19 @@ Given that one wants to provide the agent with more actions to choose from, that
 
 The position_sizer method found in helpers/hydro.py implements just that. Given an action preference it takes the total number of actions in the network into account and returns a sizer parameter alongside a boolean which represents either a long or a short. 
 
-Consider the sizer parameter as the fraction [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img1s.png) where [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgs2.png) and where [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgO.png) is the total number of action values in the network. Note that this needs to be an even number.
+Consider the sizer parameter as the fraction ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img1s.png) where ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgs2.png) and where ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgO.png) is the total number of action values in the network. Note that this needs to be an even number.
 
 Inserted into the positions as follows:
 
-[](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img6.png)
+![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img6.png)
 
-[](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img7.png)
+![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img7.png)
 
 In effect this allows the positions to be cut into halfs, triplets, quadruples and so on. We ran several experiements on this setup ranging from two up to sixteen model outputs. We obtained results, no doubt. However, it never got any better than using simply two actions only. The agent never really seemed to fully take advantage of the fact that it could diversify its positions, but it rather kept on falling back on a simple buy and sell everything strategy only that it was worse then a pure one. There was alot of less optimal activity going on in the action values under the hood. With this being said, there is obviously alot of potential to explore here if one would push a bit to get it, if one would in a more dedicated manner adjust model capacity and hyperparameters for the purpose.
 
-So this is what we did, and next comes a bit of what we wanted to do. Now wouldnt it be nice to have the agent being able to freely, in a continous context, size up its positions as it pleases? Lets say that it is, the discrete fashion of action value estimation in a DQN context quickly limits any such endevours. 
+So that is what we did, and now comes a bit of what we wanted to do. Now wouldnt it be nice to have the agent being able to freely, in a continous manner, size up its positions as it pleases? Lets say that it is, the discrete fashion of action value estimation in a DQN context quickly limits any such endevours. 
 
-Consider the Dueling DQN model architecture. You can find the paper [here](https://arxiv.org/abs/1511.06581), some implementation notes [here](https://github.com/DemaciaLarz/Rainbow/blob/master/Implementation_Notes.ipynb) and some code for a Keras implementation [here](https://github.com/DemaciaLarz/rainbow/blob/master/Train.ipynb). 
+Consider the Dueling DQN model architecture. You can find the paper ![here](https://arxiv.org/abs/1511.06581), some implementation notes ![here](https://github.com/DemaciaLarz/Rainbow/blob/master/Implementation_Notes.ipynb) and some code for a Keras implementation ![here](https://github.com/DemaciaLarz/rainbow/blob/master/Train.ipynb). 
 
 The idea was that one could use the reduced set of actions containing only one for long, and one for short as model output propagated through the advantage stream. Then let the the state value as it is propagated throught the value stream be suitably mapped to a range between zero and one, and use that real number as a multiplicative scaler instead of the sizer parameter in the equations above.
 
