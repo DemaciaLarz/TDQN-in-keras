@@ -110,7 +110,7 @@ During most part of the early project we suffered hard from diverging Q values d
 
 #### 6.2 Actions
 
-**The action:** at each timestep t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context one can consider the chain of the action from the estimated Q values, to an action-preference throuhg an argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and out comes the trading action of its choice. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
+**The action:** at each timestep t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context one can consider a journey from the estimated Q values, to an action-preference via argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and out comes out as a trading action. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
 
 **Effects of the action:** each trading action has an effect on both of the two components of the portfolio value, that is cash and stock value. Here are their update rules:
 
@@ -118,45 +118,56 @@ During most part of the early project we suffered hard from diverging Q values d
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img2.png)
 
-This can be understood as such that the cash value change with the cash needed for the taken position. Whereas the stock value is made up from the number of stocks owned post the trade times the price.
+Where [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img_nt.png) and [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img_pt.png) are the number of shares owned by the agent and the price at timestep t.
 
-**Simplifying the short position:** moving on to the formulaiton of the ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) long and short positions. A modification made within this project was to simplify the short position, such that the agent is not able to sell any shares it does not hold. Nevertheless the lack of opportunity this would bring, the reasons for the simplification of the short position in this project are as follows:
-1. user-value - our downstream use-case will not really be in a position to capitalize on any opportunity brought by the agent through the execution of a short position, mainly due to access, price and hazzle.
-2. accuracy - what is the proper market volatility parameter ![m5](http://www.sciweavers.org/tex2img.php?eq=%5Cepsilon&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=), and what is the cost estimation for shorting the stock? It is not something of immedieate clarity.
+**Simplifying the short position:** moving on to the formulaiton of the ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) long and short positions. A modification was made to simplify the short position, such that the agent is not able to sell any shares it does not hold. Nevertheless the lack of opportunity this would bring, the reasons for the simplification appeared as follows:
+1. user-value - our downstream use-case will not really be in a position to capitalize on any opportunity brought by the agent through the execution of a short position, mainly due to access and hazzle.
+2. accuracy - what is the proper market volatility parameter ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img5.png), and what is the cost estimation for shorting the stock? It is not something of immedieate clarity.
 3. comfort - it reduces complexity in the implementation, makes it easier.
 
-**The long and short positions:** with this in mind, the long and short positions can now described. Note that it is a reduced action space that is in question now, one in which there only exist buying or selling everything each trade, nothing in between. Note furthermore that this is the setup our best models ran on. However, we also experiemnted with larger action spaces, see more below.
+**The long and short positions:** with this in mind, the long and short positions can now described. this is the setup our best models ran on. 
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img6.png)
 
-![m7](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img1.png)
-
-This can be understood such that the long position represents the maximum number of shares it can get out of the cash that the agent currently holds and with transaction costs taken into account. The short position is simply the number of shares held by the agent. 
+![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img1.png)
 
 **Expanding the action space**
 Consider the reduced action space as a set that consist of exactly one long and one short position:
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img8.png)
 
-Consider furthermore the set of all legal actions the agent can take:
+Given that one wants to provide the agent with more actions to choose from, that is more options when it comes to the actual sizing of the position, one could simply add more outputs to the newtwork let them represent different slices. 
 
-![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img9.png)
+The position_sizer method found in helpers/hydro.py implements just that. Given an action preference it takes the total number of actions in the network into account and returns a sizer parameter alongside a boolean which represents either a long or a short. 
 
-The expression above can be interpreted such that each integer between 
+Consider the sizer parameter as the fraction [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img1s.png) where [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgs2.png) and where [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgO.png) is the total number of action values in the network. Note that this needs to be an even number.
 
+Inserted into the positions as follows:
 
+[](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img6.png)
 
+[](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img7.png)
 
+In effect this allows the positions to be cut into halfs, triplets, quadruples and so on. We ran several experiements on this setup ranging from two up to sixteen model outputs. We obtained results, no doubt. However, it never got any better than using simply two actions only. The agent never really seemed to fully take advantage of the fact that it could diversify its positions, but it rather kept on falling back on a simple buy and sell everything strategy only that it was worse then a pure one. There was alot of less optimal activity going on in the action values under the hood. With this being said, there is obviously alot of potential to explore here if one would push a bit to get it, if one would in a more dedicated manner adjust model capacity and hyperparameters for the purpose.
 
+So this is what we did, and next comes a bit of what we wanted to do. Now wouldnt it be nice to have the agent being able to freely, in a continous context, size up its positions as it pleases? Lets say that it is, the discrete fashion of action value estimation in a DQN context quickly limits any such endevours. 
 
+Consider the Dueling DQN model architecture. You can find the paper [here](https://arxiv.org/abs/1511.06581), some implementation notes [here](https://github.com/DemaciaLarz/Rainbow/blob/master/Implementation_Notes.ipynb) and some code for a Keras implementation [here](https://github.com/DemaciaLarz/rainbow/blob/master/Train.ipynb). 
 
-* formulating the long and short position
-* multiple actions, dueling
-reducing the action space, three fold reason
+The idea was that one could use the reduced set of actions containing only one for long, and one for short as model output propagated through the advantage stream. Then let the the state value as it is propagated throught the value stream be suitably mapped to a range between zero and one, and use that real number as a multiplicative scaler instead of the sizer parameter in the equations above.
 
+Rationale for a procedure such as this could be:
+* it would allow for an in effect continous action space with a DQN model architecture.
+* while the action values represent the direction that a trade is going, the state value asks, "how nice is it where im standing right now?". One can at least imagine that the state value could encapsulate things such as tendency towards risk at that particular state and so on. 
+* one would optimize the positioning sizer signal, "in model", which is appealing.
+* recall the intel about the agents internal state that the X2 stream propagates thorugh the net all the way to the state value estimation. Its all there.
+
+Our hypothesis was under any circumstances that this was worth to pursue. However, we encountered problems in the implementation of the dueling architecture itself which simply led down a different path, the results were elsewhere at that point in time. However, the idea is still appealing.
 
 #### 6.4 Data Augmentation
-
+* pcell very small
+* x2 state helped
+* no chance without augment
 
 #### 6.5 Model Architecture
 * FFNN, comment on LSTM and dueling
