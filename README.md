@@ -69,7 +69,10 @@ The "BH" is the baseline, the Powercell shares actual movements scaled to the po
 
 ## 6 TDQN Implementation Notes
 
-### 6.1 State Representation
+### 6.1 State Representation  
+
+***X1***
+
 The agents observations consist at each timestep of the following: 
 * S(t) represents the agents inner state.
 * D(t) is the information concerning the OHLCV (Open-High-Low-Close-Volume) data characterising the stock market.
@@ -79,10 +82,14 @@ This is what was used in order to get the results baove. In some experiements ma
 
 You will find in the context of this implementation that D(t) and I(t) bot are in the X1 input stream. Preprocessed and normalized as one they are fed into the model a single input. This was very beneficial. A number of settings with seperatae input streams for various types of observation data was experemented on without success.
 
+***X2***
+
 When it comes to the agents inner state S(t) it is made up by three parts:
 1. cash - the amount of cash the agent has at its disposal at timestep t.
 2. stock value - the value at timestep t of the stock which the agent is sitting on.
 3. number of stock - the number of stock that the agent holds.
+
+***Preprocessing***
 
 One question that arised was how to encode this properly such that core pieces of information does not get lost. Many variations were tested. 
 
@@ -104,17 +111,24 @@ However, this setup is currently bounded by the fact that the initial cash is se
 The portfolio value is the sum of cash and stock value, and the strategy as per the paper is to provide daily returns as rewards for reasons proposed one has to say makes sense. After numerous experiments with a number of varying rewards schemes, clipping the rewards to (-1, 0, 1) really made the difference in terms of creating the stability of training necessary.
 
 During most part of the early project we suffered hard from diverging Q values during training. By that we mean that as training progressed the action values kept growing apart. In effect this gave rise to a sub optimal / useless dominant either buy or sell strategy. The reward signal was idnetified as a prosperous angle to attack the problem from. Here are some the attempts:
-* episodic scaling - holding all the transiitons until the end of the episode allows for the applience applying some scaling procedure on the block of rewards, and only to after that store all of it into memory. 
-* scaling - we did alot of scaling, unit norm, log, min max, standard, standard without shifting the mean. The same thing with respect to larger polulations of rewards from memory and from preivous runs and so on. Still unstable training.
-* clipping - when we added clipping into the mix, things changed. The initial hesitance came from the obvious risk of loosing valuable information by making the rewards much more sparse. Given that clipping the rewards added to the rise of a very stable training, trading off the potential of loosing information was not a difficult desicion to make. Recall also, that information about all the subtelties about the changes in portfolio value is in fact encoded into the X2 stream. This is in turn propagated through the network and has assumably very much infleunce over the estimated action values. One can perhaps express it such that the TD error is simply kept in line by a sparse reward clipping procedure, meanwhile the inner state provides the intel needed for the actual position taking. In any case it is what worked for us, so we ran with it.
+
+**Episodic scaling** Holding all the transiitons until the end of the episode allows for the applience of some scaling procedure of choice, and only to after that store all of it into memory. 
+
+**Scaling:** We did alot of scaling, unit norm, log, min max, standard, standard without shifting the mean. With respect to many things such as larger polulations of rewards from memory and from preivous runs and so on. Still unstable training.
+
+** Clipping:** When we added clipping into the mix, things changed. The initial hesitance came from the obvious risk of loosing valuable information that may arise from making the rewards much more sparse. 
+
+Given that clipping the rewards added to the rise of a very stable training, trading off the potential of loosing information was not a difficult desicion to make. Recall also, that information about all the subtelties about the changes in portfolio value is in fact encoded into the X2 stream. 
 
 ### 6.2 Actions
 
-***The action:***
+***The Action:***
 
-at each timestep t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context one can consider a journey from the estimated Q values, to an action-preference via argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and out comes out as a trading action. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
+At each timestep t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context one can consider a journey from the estimated Q values, to an action-preference via argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and out comes out as a trading action. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
 
-**Effects of the action:** each trading action has an effect on both of the two components of the portfolio value, that is cash and stock value. Here are their update rules:
+***Effects of the Action:*** 
+
+Each trading action has an effect on both of the two components of the portfolio value, that is cash and stock value. Here are their update rules:
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img3.png)
 
@@ -122,23 +136,28 @@ at each timestep t the agent executes a trading action as per its policy. It can
 
 Where [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img_nt.png) and [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img_pt.png) are the number of shares owned by the agent and the price at timestep t.
 
-**Simplifying the short position:** moving on to the formulaiton of the ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) long and short positions. A modification was made to simplify the short position, such that the agent is not able to sell any shares it does not hold. Nevertheless the lack of opportunity this would bring, the reasons for the simplification appeared as follows:
+***Simplifying the Short Position:*** 
+
+Moving on to the formulaiton of the ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) long and short positions. A modification was made to simplify the short position, such that the agent is not able to sell any shares it does not hold. Nevertheless the lack of opportunity this would bring, the reasons for the simplification appeared as follows:
 1. user-value - our downstream use-case will not really be in a position to capitalize on any opportunity brought by the agent through the execution of a short position, mainly due to access and hazzle.
 2. accuracy - what is the proper market volatility parameter ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img5.png), and what is the cost estimation for shorting the stock? It is not something of immedieate clarity.
 3. comfort - it reduces complexity in the implementation, makes it easier.
 
-**The long and short positions:** with this in mind, the long and short positions can now described. this is the setup our best models ran on. 
+***The Long and Short Positions:*** 
+
+With this in mind, the long and short positions can now described. this is the setup our best models ran on. 
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img6.png)
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img1.png)
 
-**Expanding the action space**
+***Expanding the Action Space***
+
 Consider the reduced action space as a set that consist of exactly one long and one short position:
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img8.png)
 
-Given that one wants to provide the agent with more actions to choose from, that is more options when it comes to the actual sizing of the position, one could simply add more outputs to the newtwork let them represent different slices. 
+**Position Sizer:** Given that one wants to provide the agent with more actions to choose from, that is more options when it comes to the actual sizing of the position, one could simply add more outputs to the newtwork let them represent different slices. 
 
 The position_sizer method found in helpers/hydro.py implements just that. Given an action preference it takes the total number of actions in the network into account and returns a sizer parameter alongside a boolean which represents either a long or a short. 
 
@@ -152,7 +171,7 @@ Inserted into the positions as follows:
 
 In effect this allows the positions to be cut into halfs, triplets, quadruples and so on. We ran several experiements on this setup ranging from two up to sixteen model outputs. We obtained results, no doubt. However, it never got any better than using simply two actions only. The agent never really seemed to fully take advantage of the fact that it could diversify its positions, but it rather kept on falling back on a simple buy and sell everything strategy only that it was worse then a pure one. There was alot of less optimal activity going on in the action values under the hood. With this being said, there is obviously alot of potential to explore here if one would push a bit to get it, if one would in a more dedicated manner adjust model capacity and hyperparameters for the purpose.
 
-So that is what we did, and now comes a bit of what we wanted to do. Now wouldnt it be nice to have the agent being able to freely, in a continous manner, size up its positions as it pleases? Lets say that it is, the discrete fashion of action value estimation in a DQN context quickly limits any such endevours. 
+**In a dueling context:** So that is what we did, and now comes a bit of what we wanted to do. Now wouldnt it be nice to have the agent being able to freely, in a continous manner, size up its positions as it pleases? Lets say that it is, the discrete fashion of action value estimation in a DQN context quickly limits any such endevours. 
 
 Consider the Dueling DQN model architecture. You can find the paper [here](https://arxiv.org/abs/1511.06581), some implementation notes [here](https://github.com/DemaciaLarz/Rainbow/blob/master/Implementation_Notes.ipynb) and some code for a Keras implementation [here](https://github.com/DemaciaLarz/rainbow/blob/master/Train.ipynb). 
 
@@ -176,7 +195,7 @@ Many attempts were made to pump up the capacity but the sweetspot in this settin
 
 Results were only possible when a full carpet of batchnormalization layers were applied. Since these layers add quite alot to training time, targeted attempts were made towards the removal of them with poor outcomes. Dropout for example did not do the job, either on its own or combined witn batchnormalization.  
 
-**DQN settings**
+#### DQN Settings
 Besides some of the original DQN techniques we made use of Double DQN and Prioritized experience replay. You can find the papers for these implementations [here](https://arxiv.org/abs/1509.06461) and [here](https://arxiv.org/abs/1511.05952). 
 
 ### 6.6 Hyperparameters
