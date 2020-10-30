@@ -140,7 +140,7 @@ Given that one wants to provide the agent with more actions to choose from, that
 
 The position_sizer method found in helpers/hydro.py implements just that. Given an action preference it takes the total number of actions in the network into account and returns a sizer parameter alongside a boolean which represents either a long or a short. 
 
-Consider the sizer parameter as the fraction ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img1s.png) where ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgs2.png) and where ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgO.png) is the total number of action values in the network. Note that this needs to be an even number.
+Consider the sizer parameter as the fraction  ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img1s.png) where ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgs2.png)  and where ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgO.png) is the total number of action values in the network. Note that this needs to be an even number.
 
 Inserted into the positions as follows:
 
