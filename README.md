@@ -26,7 +26,7 @@ When it comes to gold, [here](https://www.kaggle.com/omdatas/historic-gold-price
 ## 3 User-Values / Downstream Application
 The use-case is to apply one or more successfully trained models such that they are able to bring some actual useful intel on a daily basis when it comes to the Powercell share movements.
 
-This is achieved through an application, in which daily results based on the two models’ actions alongside the underlying asset as a baseline is being presented. The results are obtained by running an inference procedure as per the [pipeline.py]() script. 
+This is achieved through an application, in which daily results based on the two models’ actions alongside the underlying asset as a baseline is being presented. The results are obtained by running an inference procedure as per the [pipeline.py](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/pipeline.py) script. 
 
 In a nutshell, a cronjob runs the script around 5:00 am each morning. It collects yesterday’s closing data through some selenium code, performs the inference procedure, and updates a set of databases so that the actions of the two models can get interpreted as buy or sell signals in perfect time a few hours before the markets open.
 
@@ -119,7 +119,7 @@ During most part of the early project, we suffered hard from diverging Q values 
 
 **Clipping:** When we added clipping into the mix, things changed. The initial hesitance came from the obvious risk of losing valuable information that may arise from making the rewards much more sparse. 
 
-Given that clipping, the rewards added to the rise of very stable training, trading off the potential of losing information was not a difficult decision to make. Recall also, that information about all the subtleties about the changes in portfolio value is in fact encoded into the X2 stream. 
+Given that clipping the rewards added to the rise of very stable training, trading off the potential of losing information was not a difficult decision to make. Recall also, that information about all the subtleties about the changes in portfolio value is in fact encoded into the X2 stream. 
 
 
 ### 6.2 Actions
@@ -159,9 +159,9 @@ Consider the reduced action space as a set that consists of exactly one long and
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img8.png)
 
-**Position Sizer:** Given that one wants to provide the agent with more actions to choose from, that is more options when it comes to the actual sizing of the position, one could simply add more outputs to the network let them represent different slices. 
+**Position Sizer:** Given that one wants to provide the agent with more actions to choose from, that is more options when it comes to the actual sizing of the position, one could simply add more outputs to the network and let them represent different slices. 
 
-The position_sizer method found in helpers/hydro.py implements just that. Given an action preference, it takes the total number of actions in the network into account and returns a sizer parameter alongside a boolean which represents either a long or a short. 
+The position_sizer method found in [helpers/hydro.py](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/helpers/hydro.py) implements just that. Given an action preference, it takes the total number of actions in the network into account and returns a sizer parameter alongside a boolean which represents either a long or a short. 
 
 Consider the sizer parameter as the fraction  ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img1s.png) where ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgs2.png)  and where ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgO.png) is the total number of action values in the network. Note that this needs to be an even number.
 
@@ -171,9 +171,9 @@ Inserted into the positions as follows:
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgs4.png)
 
-In effect this allows the positions to be cut into halves, triplets, quadruples, and so on. We ran some experiments on this setup ranging from two up to sixteen model outputs. We obtained results, no doubt. However, it never got any better than using two actions only. The agent never really seemed to fully take advantage of the fact that it could diversify its positions, but it rather kept on falling back on a simple buy and sell everything strategy only that it was worse than a pure one. There was a lot of less optimal activity going on in the action values under the hood. With this being said, there is obviously a lot of potentials to explore here if one would push a bit to get it and if one would in a more dedicated manner adjust model capacity and hyperparameters for the purpose.
+In effect this allows the positions to be cut into halves, triplets, quadruples, and so on. We ran some experiments on this setup ranging from two up to sixteen model outputs. We obtained results, no doubt. However, it never got any better than using two actions only. The agent never really seemed to fully take advantage of the fact that it could diversify its positions, but it rather kept on falling back on a simple buy and sell everything strategy only that it was worse than a pure one. There was a lot of less optimal activity going on in the action values under the hood. With this being said, there is obviously a lot of potentials to explore here if one would just push a bit to get it. Adjusting model capacity and hyperparameters for the purpose.
 
-**In a dueling context:** So that is what we did, and now comes a bit of what we wanted to do. Now wouldn’t it be nice to have the agent being able to freely, in a continuous manner, size up its positions as it pleases? Let’s say that it is, the discrete fashion of action value estimation in a DQN context quickly limits any such endeavors. 
+**A Dueling Context:** Now wouldn’t it be nice to have the agent being able to freely, in a continuous manner, size up its positions as it pleases? Let’s say that it is, the discrete fashion of action value estimation in a DQN context quickly limits any such endeavors. 
 
 Consider the Dueling DQN model architecture. You can find the paper [here](https://arxiv.org/abs/1511.06581), some implementation notes [here](https://github.com/DemaciaLarz/Rainbow/blob/master/Implementation_Notes.ipynb) and some code for a Keras implementation [here](https://github.com/DemaciaLarz/rainbow/blob/master/Train.ipynb). 
 
