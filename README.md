@@ -190,9 +190,9 @@ Our hypothesis was under any circumstances that this was worth pursuing. We enco
 Note that the Powercell data set is not more than 1315 observations after that 98 rows were sliced off as the test set. This is not much and it was to our surprise that any results at all were possible. Two things were crucial here. First of all the data augmentation techniques such as those that are mentioned in the paper, and secondly the fact that the X2 state is in effect generating new unseen data continuously.
 
 ### 6.5 Model Architecture
-Even though many attempts were made on various LSTM setups and dueling architecture, we ended up on a feed-forward neural network. We maintained two input streams with proportions such that X1 held two-thirds of the capacity and one third was given to X2. This worked nicely. On top of this, the layers were concatenated and together they went through one additional layer and into output. 
+Even though attempts were made on various LSTM setups and dueling architecture, we ended up on a feed-forward neural network. We maintained two input streams with proportions such that X1 held two-thirds of the capacity and one third was given to X2. This worked nicely. On top of this, the layers were concatenated and together they went through one additional layer and into output. 
 
-Many attempts were made to pump up the capacity but the sweet spot in this setting was simply ((200, 100), (200), (2)), and nothing else.
+We tried to pump up the capacity but the sweet spot in this setting was simply ((200, 100), (200), (2)), and nothing else.
 
 Results were only possible when a full carpet of batch normalization layers was applied. Since these layers add quite a lot to training time, targeted attempts were made towards the removal of them with poor outcomes. Dropout for example did not do the job, either on its own or combined with batch normalization.  
 
