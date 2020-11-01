@@ -126,7 +126,7 @@ Given that clipping the rewards added to the rise of very stable training, tradi
 
 ***The Action:***
 
-At each time step t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context, one can consider a journey from the estimated Q values, to an action-preference via argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and comes out as a trading action. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
+At each time step t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context, one can consider a journey from the estimated Q values, to an action-preference via an argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and comes out as a trading action. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
 
 ***Effects of the Action:*** 
 
