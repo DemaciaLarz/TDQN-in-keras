@@ -24,11 +24,11 @@ You can find analysis and preprocessing as it relates to this project of the act
 When it comes to gold, [here](https://www.kaggle.com/omdatas/historic-gold-prices) are the historical prices, and [here](http://htmlpreview.github.io/?https://github.com/DemaciaLarz/trading-hydro/blob/main/notebooks/htmls/know_your_data_1_gold.html) is the analysis from this project.
 
 ## 3 User-Values / Downstream Application
-The use-case is to apply one or more successfully trained models such that they are able to bring some actual useful intel on a daily basis when it comes to the Powercell share movements.
+The use-case is to apply one or more successfully trained models so they can bring useful intel on a daily basis when it comes to the Powercell share movements.
 
-This is achieved through an application, in which daily results based on the two models’ actions alongside the underlying asset as a baseline is being presented. The results are obtained by running an inference procedure as per the [pipeline.py](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/pipeline.py) script. 
+This is achieved through an application where daily trading actions from two models are being presented. The results are obtained by running an inference procedure as per the [pipeline.py](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/pipeline.py) script. 
 
-In a nutshell, a cronjob runs the script around 5:00 am each morning. It collects yesterday’s closing data through some selenium code, performs the inference procedure, and updates a set of databases so that the actions of the two models can get interpreted as buy or sell signals in perfect time a few hours before the markets open.
+In a nutshell, a cronjob runs the script around 5:00 am each morning. It collects yesterday’s closing data through some selenium code and performs the inference procedure and updates a set of databases. The agents tradingactions can now get interpreted as buy or sell signals in perfect time a few hours before the markets open.
 
 This could provide some opportunity. Either by simply dedicating a bit of capital for the purpose and executing the daily trades each day as per one’s favorite model, or by using the model behavior as merely additional intel in one’s own decision-making process. 
 
@@ -39,7 +39,7 @@ Below is a screenshot of the application. It can at the time of writing be found
 ![Application img](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/image_application.png "Application 1")
 
 ## 4 Content
-* train.py is the code on which the most successful model was trained. It takes Powercell CSV data and trains a TDQN agent.
+* [train.py](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/train.py) is the code on which the most successful model was trained. It takes Powercell CSV data and trains a TDQN agent.
 * pipeline.py is the inference procedure.
 * helpers/base.py contains the prioritized experience replay buffer.
 * helpers/data.py gets the data and preprocess it.
