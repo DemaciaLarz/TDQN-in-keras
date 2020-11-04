@@ -40,10 +40,10 @@ Below is a screenshot of the application. It can at the time of writing be found
 
 ## 4 Content
 * [train.py](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/train.py) is the code on which the most successful model was trained. It takes Powercell CSV data and trains a TDQN agent.
-* pipeline.py is the inference procedure.
-* helpers/base.py contains the prioritized experience replay buffer.
-* helpers/data.py gets the data and preprocess it.
-* helpers.hydro.py holds various helper functions.
+* [pipeline.py](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/pipeline.py) is the inference procedure.
+* [helpers/base.py](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/helpers/base.py) contains the prioritized experience replay buffer.
+* [helpers/data.py](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/helpers/data.py) gets the data and preprocess it.
+* [helpers.hydro.py](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/helpers/hydro.py) holds various helper functions.
 * the two model files are saved Tensorflow Keras model objects. These are the two models in the application.
 * in the notebooks folder there are some notebooks on preprocessing, results and training.
 * the CSV file is Powercell data up until 2020-09-25.
@@ -71,7 +71,7 @@ The "BH" is the baseline, the Powercell shares actual movements scaled to the po
 
 ### 6.1 State Representation  
 
-***X1***
+***Observations***
 
 The agent’s observations consist of the following at each time step: 
 * S(t) represents the agent’s inner state.
@@ -82,7 +82,7 @@ This is what was used in order to get the results above. In some experiments, ma
 
 You will find in the context of this implementation that D(t) and I(t) bot are in the X1 input stream. Preprocessed and normalized as one they are fed into the model a single input. This was very beneficial. A number of settings with separate input streams for various types of observation data were experimented on without success.
 
-***X2***
+***Internal State***
 
 When it comes to the agent’s inner state S(t) it is made up of three parts:
 1. cash - the amount of cash the agent has at its disposal at timestep t.
@@ -91,9 +91,9 @@ When it comes to the agent’s inner state S(t) it is made up of three parts:
 
 ***Preprocessing***
 
-One question that arose was how to encode this properly such that core pieces of information do not get lost. Many variations were tested. 
+One question that arose was how to encode this properly such that core pieces of information do not get lost. 
 
-First of all the cash and stock value made sense to simply put in a two-dimensional vector and apply some normalizer of choice. They would under all circumstances maintain their opposite proportions meanwhile bottoming out when zero, this would in turn provide a signal to the agent about which kind of position it is capable to formulate. 
+First of all the cash and stock value made sense to simply put in a two-dimensional vector and apply some normalizer of choice. They would under all circumstances maintain their opposite proportions.
 
 A number of scaling methods were tested, standard normal scaling, removing the mean and scale to unit variance is what worked best. The reason is simply that it brings such stability in training so that it allows for results to maybe or maybe not come to light. 
 
@@ -109,7 +109,7 @@ However, this setup is currently bounded by the fact that the initial cash is se
 
 
 ### 6.3 Scalar Reward Signal
-The portfolio value is the sum of cash and stock value, and the strategy as per the paper is to provide daily returns as rewards for reasons proposed one has to say makes sense. After numerous experiments with a number of varying rewards schemes, clipping the rewards to (-1, 0, 1) really made the difference in terms of creating the stability of training necessary.
+The portfolio value is the sum of cash and stock value, and the strategy as per the paper is to provide daily returns as rewards for reasons proposed one has to say makes sense. After numerous experiments with a number of varying rewards schemes, clipping the rewards to {-1, 0, 1} really made the difference in terms of creating the stability of training necessary.
 
 During most part of the early project, we suffered hard from diverging Q values during training. By that, we mean that as training progressed the action values kept growing apart. In effect, this gave rise to a sub-optimal / useless dominant either buy or sell strategy. The reward signal was identified as a prosperous angle to attack the problem. Here are some attempts:
 
@@ -126,7 +126,7 @@ Given that clipping the rewards added to the rise of very stable training, tradi
 
 ***The Action:***
 
-At each time step t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context, one can consider a journey from the estimated Q values, to an action-preference via an argmax operation (or whatever policy is in effect), Whereas the action-preference goes into the TDQN position formulation procedure and comes out as a trading action. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
+At each time step t the agent executes a trading action as per its policy. It can buy, sell or in effect hold its position. In a DQN context, one can consider a journey from the estimated Q values, to an action-preference via an argmax operation (or whatever policy is in effect). Whereas the action-preference goes into the TDQN position formulation procedure and comes out as a trading action. This trading action ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) is the actual action of the agent, and it can be either long or short.
 
 ***Effects of the Action:*** 
 
@@ -136,7 +136,7 @@ Each trading action has an effect on both of the two components of the portfolio
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img2.png)
 
-Where [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img_nt.png) and [](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img_pt.png) are the number of shares owned by the agent and the price at timestep t.
+Where ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img_nt.png) and ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img_pt.png) are the number of shares owned by the agent and the price at timestep t.
 
 ***Simplifying the Short Position:*** 
 
