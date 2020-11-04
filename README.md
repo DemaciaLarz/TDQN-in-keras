@@ -140,14 +140,14 @@ Where ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img_nt.pn
 
 ***Simplifying the Short Position:*** 
 
-Moving on to the formulation of the ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png) long and short positions. A modification was made to simplify the short position, such that the agent is not able to sell any shares it does not hold. Nevertheless the lack of opportunity this would bring, the reasons for the simplification appeared as follows:
+Moving on to the formulation of the ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img4.png). A modification was made to simplify the short position, such that the agent is not able to sell any shares it does not hold. Nevertheless the lack of opportunity this would bring, the reasons for the simplification appeared as follows:
 1. user-value - our downstream use-case will not really be in a position to capitalize on any opportunity brought by the agent through the execution of a short position, mainly due to access and hassle.
 2. accuracy - what is the proper market volatility parameter ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img5.png), and what is the cost estimation for shorting the stock? It is not something of immediate clarity.
 3. comfort - it reduces complexity in the implementation, makes it easier.
 
 ***The Long and Short Positions:*** 
 
-With this in mind, the long and short positions can now be described. this is the setup our best models ran on. 
+With this in mind, the long and short positions can now be described as follows: 
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/img6.png)
 
@@ -171,11 +171,9 @@ Inserted into the positions as follows:
 
 ![](https://github.com/DemaciaLarz/TDQN-in-keras/blob/main/files/imgs4.png)
 
-In effect this allows the positions to be cut into halves, triplets, quadruples, and so on. We ran some experiments on this setup ranging from two up to sixteen model outputs. We obtained results, no doubt. However, it never got any better than using two actions only. The agent never really seemed to fully take advantage of the fact that it could diversify its positions, but it rather kept on falling back on a simple buy and sell everything strategy only that it was worse than a pure one. There was a lot of less optimal activity going on in the action values under the hood. With this being said, there is obviously a lot of potentials to explore here if one would just push a bit to get it. Adjusting model capacity and hyperparameters for the purpose.
+In effect this allows the positions to be cut into halves, triplets, quadruples, and so on. We ran some experiments on this setup ranging from two up to sixteen model outputs. We obtained results, no doubt. However, it never got any better than using two actions only. The agent never really seemed to fully take advantage of the fact that it could diversify its positions, but it rather kept on falling back on a simple buy and sell everything strategy only that it was worse than a pure one. There was a lot of less optimal activity going on in the action values under the hood. With this being said, there should be potential here to explore if one would just push a bit to get it.
 
-**A Dueling Context:** Now wouldn’t it be nice to have the agent being able to freely, in a continuous manner, size up its positions as it pleases? Let’s say that it is, the discrete fashion of action value estimation in a DQN context quickly limits any such endeavors. 
-
-Consider the Dueling DQN model architecture. You can find the paper [here](https://arxiv.org/abs/1511.06581), some implementation notes [here](https://github.com/DemaciaLarz/Rainbow/blob/master/Implementation_Notes.ipynb) and some code for a Keras implementation [here](https://github.com/DemaciaLarz/rainbow/blob/master/Train.ipynb). 
+**A Dueling Context:** Consider the Dueling DQN model architecture. You can find the paper [here](https://arxiv.org/abs/1511.06581), some implementation notes [here](https://github.com/DemaciaLarz/Rainbow/blob/master/Implementation_Notes.ipynb) and some code for a Keras implementation [here](https://github.com/DemaciaLarz/rainbow/blob/master/Train.ipynb). 
 
 The idea was that one could use the reduced set of actions containing only one for long, and one for short as model output propagated through the advantage stream. Then let the state value as it is propagated throughout the value stream be suitably mapped to a range between zero and one, and use that real number as a multiplicative scaler instead of the sizer parameter in the equations above.
 
